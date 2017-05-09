@@ -54,8 +54,11 @@ $(function initializeMap (){
       position: latLng
     });
     marker.setMap(currentMap);
+    return marker;
   }
 
+  window.map = currentMap;
+  window.drawMarker = drawMarker;
     // drawMarker('hotel', [41.8884073, -87.6293817]);
     // drawMarker('restaurant', [41.9134555, -87.6503527]);
     // drawMarker('activity', [41.8675766, -87.6162267])
