@@ -30,6 +30,7 @@ $(document).ready(function () {
         restaurant: 'restaurants',
         activity: 'activities'
     };
+    let itinerary_names = ['hotel', 'restaurant', 'activity'];
     let dayMaster = [{ hotel: [], restaurant: [], activity: []}];
     window.dayMaster = dayMaster;
     let currentDayIndex = 0;
@@ -79,7 +80,6 @@ $(document).ready(function () {
     };
 
     // add to dom
-    let itinerary_names = ['hotel', 'restaurant', 'activity'];
     itinerary_names.forEach(item => { addToItinerary(item) });
 
     //////////////////////////
@@ -95,14 +95,9 @@ $(document).ready(function () {
         let destinationType = parent.data('destinationType')
         let id = parent.data('id');
         
-        console.log('type', destinationType)
-        console.log('before', dayMaster[currentDayIndex][destinationType])
-        
         dayMaster[currentDayIndex][destinationType] =
             dayMaster[currentDayIndex][destinationType]
                 .filter(datum => datum.id !== id);
-        
-        console.log('after', dayMaster[currentDayIndex][destinationType])
         
         // remove row on itinerary
         $(this).parent().remove();
@@ -118,13 +113,43 @@ $(document).ready(function () {
         let day = dayMaster.length;
         currentDayIndex = day-1;
         
-        // add to dom
+        // add button to dom
         var newDay = $('<button class="btn btn-circle day-btn current-day">' + 
             day + '</button>');
         $('.day-buttons')
             .children(':last-child')
             .removeClass('current-day');
         $('.day-buttons').append(newDay);
+        
+        // remove old itinerary
+        $('.list-group').empty();
+        
+        // add new itinerary
+    });
+    
+    /////////////////////
+    // switching between days
+    
+    $('.day-buttons').on('click', '.btn', function(event) {
+        event.stopPropagation();
+        $(this).parent().children().removeClass('current-day');
+        $(this).addClass('current-day');
+        
+        // remove old itinerary
+        $('.list-group').empty();
+        
+        // add new itinerary
+        currentDayIndex = Number($(this).text()) - 1     
+        itinerary_names.forEach(name => {
+            dayMaster[currentDayIndex][name].forEach(event => {
+                let newItem = $('<div class=\"itinerary-item\"><span class=' +
+                    '\"title\">' + event.destinationName + 
+                    '</span><button class=\"btn btn-xs ' +
+                    'btn-danger remove btn-circle\">x</button></div>');
+                $('#' + name + '-list-group').append(newItem);
+            })
+        });
+        
     });
     
 
