@@ -30,12 +30,16 @@ $(document).ready(function () {
         restaurant: 'restaurants',
         activity: 'activities'
     };
+    let dayMaster = [{ hotel: [], restaurant: [], activity: []}];
+    window.dayMaster = dayMaster;
+    let currentDayIndex = 0;
 
     ////////////////////////////
-    // add from selector/dropdown to itinerary!
+    // add event from selector/dropdown to itinerary!
     let addToItinerary = function (name) {
         $('#' + name + '-adder').on('click', '.btn', function(event) {
             event.stopPropagation();
+            
             // select and make new item
             let elements = $(this).siblings('#' + name + '-choices');
             let id = elements.val();
@@ -55,10 +59,22 @@ $(document).ready(function () {
             map.panTo(new google.maps.LatLng(coords[0], coords[1]));
             let marker = window.drawMarker(itinerary_names_plural[name], coords);
 
-            console.log(newItem)
-
-            newItem.data({ id: id, marker: marker});
+            // data
+            newData = { 
+                id: id, 
+                marker: marker, 
+                destinationName: text, 
+                destinationType: name 
+            };
+            
+            // add to dom
+            newItem.data(newData);
             $('#' + name + '-list-group').append(newItem);
+            
+            // add to daymaster
+            dayMaster[currentDayIndex][name].push(newData);
+            
+            console.log('daymaster', dayMaster)
         });
     };
 
@@ -70,19 +86,67 @@ $(document).ready(function () {
     // removing events
     $('#itinerary').on('click', '.btn', function(event){
         event.stopPropagation();
-        let marker = $(this).parent().data('marker');
-        marker.setMap(null);
+        let parent = $(this).parent();
+        
+        // remove associated marker
+        parent.data('marker').setMap(null);        
+        
+        // remove from master
+        let destinationType = parent.data('destinationType')
+        let id = parent.data('id');
+        
+        console.log('type', destinationType)
+        console.log('before', dayMaster[currentDayIndex][destinationType])
+        
+        dayMaster[currentDayIndex][destinationType] =
+            dayMaster[currentDayIndex][destinationType]
+                .filter(datum => datum.id !== id);
+        
+        console.log('after', dayMaster[currentDayIndex][destinationType])
+        
+        // remove row on itinerary
         $(this).parent().remove();
     });
 
     ///////////////////////
     // adding days
-    let day = 1;
     $('.add-day').on('click', '.btn', function(event){
         event.stopPropagation();
-        var newDay = $('<button class="btn btn-circle day-btn">' + day++ + '</button>');
+        
+        // add to master
+        dayMaster.push({ hotel: [], restaurant: [], activity: []});
+        let day = dayMaster.length;
+        currentDayIndex = day-1;
+        
+        // add to dom
+        var newDay = $('<button class="btn btn-circle day-btn current-day">' + 
+            day + '</button>');
+        $('.day-buttons')
+            .children(':last-child')
+            .removeClass('current-day');
         $('.day-buttons').append(newDay);
-    })
+    });
+    
 
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
