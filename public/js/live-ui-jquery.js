@@ -74,8 +74,6 @@ $(document).ready(function () {
             
             // add to daymaster
             dayMaster[currentDayIndex][name].push(newData);
-            
-            console.log('daymaster', dayMaster)
         });
     };
 
@@ -123,8 +121,6 @@ $(document).ready(function () {
         
         // remove old itinerary
         $('.list-group').empty();
-        
-        // add new itinerary
     });
     
     /////////////////////
