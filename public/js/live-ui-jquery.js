@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    
+
     ////////////////////////////
     // selector/dropdown of hotels/activities/restaurants
 
@@ -7,7 +7,7 @@ $(document).ready(function () {
     var dropdownCreator = function (arr) {
         let elements = $();
         arr.forEach(elem => {
-            elements = elements.add('<option value=\"' + 
+            elements = elements.add('<option value=\"' +
                 elem.id + '\">' + elem.name + '</option>');
         });
         return elements;
@@ -20,17 +20,17 @@ $(document).ready(function () {
 
     ////////////////////////////
     // data accessing for functions
-    let arrData = { 
-        hotel: hotels, 
-        restaurant: restaurants, 
-        activity: activities 
+    let arrData = {
+        hotel: hotels,
+        restaurant: restaurants,
+        activity: activities
     };
-    let itinerary_names_plural = { 
-        hotel: 'hotels', 
-        restaurant: 'restaurants', 
-        activity: 'activities' 
+    let itinerary_names_plural = {
+        hotel: 'hotels',
+        restaurant: 'restaurants',
+        activity: 'activities'
     };
-    
+
     ////////////////////////////
     // add from selector/dropdown to itinerary!
     let addToItinerary = function (name) {
@@ -43,20 +43,20 @@ $(document).ready(function () {
                 .children()
                 .filter((i, elem) => elem.value == id)
                 .text();
-            let newItem = $('<div class=\"itinerary-item\"><span class=' + 
-                '\"title\">' + text + '</span><button class=\"btn btn-xs ' + 
+            let newItem = $('<div class=\"itinerary-item\"><span class=' +
+                '\"title\">' + text + '</span><button class=\"btn btn-xs ' +
                 'btn-danger remove btn-circle\">x</button></div>');
 
-            // make new marker, move to it 
+            // make new marker, move to it
             let coords = arrData[name]
                 .filter(datum => datum.id == id)[0]
                 .place
                 .location;
             map.panTo(new google.maps.LatLng(coords[0], coords[1]));
             let marker = window.drawMarker(itinerary_names_plural[name], coords);
-            
+
             console.log(newItem)
-            
+
             newItem.data({ id: id, marker: marker});
             $('#' + name + '-list-group').append(newItem);
         });
@@ -65,7 +65,7 @@ $(document).ready(function () {
     // add to dom
     let itinerary_names = ['hotel', 'restaurant', 'activity'];
     itinerary_names.forEach(item => { addToItinerary(item) });
-    
+
     //////////////////////////
     // removing events
     $('#itinerary').on('click', '.btn', function(event){
@@ -80,11 +80,9 @@ $(document).ready(function () {
     let day = 1;
     $('.add-day').on('click', '.btn', function(event){
         event.stopPropagation();
-        let newDay = $('<span>' + day++ + '</span><button ' + 
-            'class="btn btn-xs btn-danger remove btn-circle">x</button>');
-
-        $('#day-title').append(newDay);
-    });
+        var newDay = $('<button class="btn btn-circle day-btn">' + day++ + '</button>');
+        $('.day-buttons').append(newDay);
+    })
 
 });
 
